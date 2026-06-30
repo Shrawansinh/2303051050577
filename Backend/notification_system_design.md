@@ -287,3 +287,51 @@ SELECT DISTINCT studentID
 FROM notifications
 WHERE notificationType = 'Placement'
 AND createdAt >= NOW() - INTERVAL 7 DAY;
+
+
+
+
+// stage 4
+# Stage 4
+
+solution
+
+To improve performance, I would use:
+
+- Pagination
+- Redis Cache
+- WebSocket for real-time notifications
+- Database Indexing
+- Lazy Loading
+- Read Replicas
+- Background Jobs for notification processing
+
+Performance Improvements
+
+- Fetch only required notifications.
+- Cache frequently accessed data.
+- Load notifications page by page.
+- Push new notifications instead of polling.
+- Optimize database queries using indexes.
+
+Trade-offs
+
+Pagination
+- Pros: Faster queries, lower memory usage.
+- Cons: Multiple API calls.
+
+Redis Cache
+- Pros: Very fast response time.
+- Cons: Cache invalidation complexity.
+
+WebSocket
+- Pros: Real-time updates.
+- Cons: Persistent connections increase server resources.
+
+Read Replica
+- Pros: Reduces load on primary database.
+- Cons: Replica synchronization delay.
+
+Background Jobs
+- Pros: Faster API response.
+- Cons: Additional infrastructure required.
