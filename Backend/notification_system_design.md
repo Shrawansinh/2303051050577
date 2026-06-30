@@ -243,3 +243,47 @@ Delete Notification
 db.notifications.deleteOne({
   _id: ObjectId("id")
 });
+// stage 3
+# Stage 3
+
+ Is the query accurate?
+
+Yes. The query correctly retrieves unread notifications of a specific student ordered by latest notification.
+
+Why is it slow?
+
+- Large number of records.
+- Uses SELECT *.
+- Full table scan if indexes are missing.
+- Sorting millions of rows.
+
+## What would you change?
+
+SELECT id, title, message, notificationType, createdAt
+FROM notifications
+WHERE studentID = 1042
+AND isRead = false
+ORDER BY createdAt DESC;
+
+CREATE INDEX idx_student_read_created
+ON notifications(studentID, isRead, createdAt DESC);
+
+Computational Cost
+
+- Without Index: O(N log N)
+- With Index: O(log N + K)
+
+Should indexes be added on every column?
+
+No.
+
+- Extra storage required.
+- Slower INSERT, UPDATE and DELETE operations.
+- Only frequently queried columns should be indexed.
+
+Query to find students who received Placement notifications in the last 7 days
+
+SELECT DISTINCT studentID
+FROM notifications
+WHERE notificationType = 'Placement'
+AND createdAt >= NOW() - INTERVAL 7 DAY;
