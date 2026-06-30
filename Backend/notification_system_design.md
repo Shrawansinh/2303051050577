@@ -335,3 +335,53 @@ Read Replica
 Background Jobs
 - Pros: Faster API response.
 - Cons: Additional infrastructure required.
+
+
+// stage 5
+
+- Sequential processing is slow.
+- If email sending fails, the process stops.
+- No retry mechanism.
+- No queue for background processing.
+- Poor scalability for 50,000 students.
+
+What if send email fails for 200 students?
+
+- Log failed deliveries.
+- Store failed requests in a retry queue.
+- Retry sending emails automatically.
+- Continue processing remaining students.
+
+Redesign
+
+- Save notification to the database first.
+- Publish notification to a message queue.
+- Worker services send emails and push notifications independently.
+- Retry failed jobs with exponential backoff.
+
+ Should DB save and email happen together?
+
+No.
+
+
+Revised Pseudocode
+
+function notify_all(student_ids, message):
+
+    for each student_id in student_ids:
+
+        save_to_db(student_id, message)
+
+        add_to_queue(student_id, message)
+
+worker():
+
+    while queue is not empty:
+
+        job = get_next_job()
+
+        try:
+            send_email(job.student_id, job.message)
+            push_to_app(job.student_id, job.message)
+        catch:
+            retry(job)
